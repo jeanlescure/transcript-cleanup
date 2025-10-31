@@ -36,11 +36,15 @@ function processContent(content) {
         // Remove WEBVTT header with newlines
         [/WEBVTT\n/g, ''],
         
-        // Remove timestamp lines (number followed by timestamp)
-        [/\n\d+\n.+? --> .+\n/g, ''],
+        // Remove cue IDs and timestamp lines
+        // Handles both simple IDs (numbers) and UUID-style IDs (Teams format)
+        [/\n[\w\-/]+\n.+? --> .+\n/g, ''],
         
-        // Remove vocal expressions with word boundaries
-        [/(^|\s)([eEaAuU][hH]+|[eEaAuU]m+)[,.\?]{0,1}\s/g, '']
+        // Remove vocal expressions - handle newline before
+        [/\n([eEaAuU][hH]+|[eEaAuU]m+)[,.\?]{0,1}\s/g, '\n'],
+        
+        // Remove vocal expressions - handle space before
+        [/ ([eEaAuU][hH]+|[eEaAuU]m+)[,.\?]{0,1}\s/g, ' ']
     ];
     
     // Use multiReplaceSync to apply all patterns in one operation
@@ -136,5 +140,15 @@ function main() {
     }
 }
 
-// Run the script
-main();
+// Run the script only if this file is executed directly, not when imported
+if (require.main === module) {
+  main();
+}
+
+// Export functions for testing
+module.exports = {
+  processContent,
+  expandPath,
+  generateOutputPath,
+  checkDependencies,
+};

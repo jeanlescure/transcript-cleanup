@@ -71,7 +71,7 @@ function processContent(content) {
  */
 function generateOutputPath(inputPath) {
     const parsedPath = path.parse(inputPath);
-    const outputFileName = `${parsedPath.name}-processed${parsedPath.ext}`;
+    const outputFileName = `${parsedPath.name}-processed.txt`;
     return path.join(parsedPath.dir, outputFileName);
 }
 

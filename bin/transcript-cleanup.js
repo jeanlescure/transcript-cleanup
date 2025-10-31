@@ -30,6 +30,8 @@ function expandPath(filePath) {
  * @returns {string} - The processed content
  */
 function processContent(content) {
+    const normalizedContent = content.replace(/\r/g, '');
+
     // Define the replace patterns array
     // Each pattern is [matcher, replacement] where replacement is empty string to remove
     const replacePatterns = [
@@ -41,14 +43,17 @@ function processContent(content) {
         [/\n[\w\-/]+\n.+? --> .+\n/g, ''],
         
         // Remove vocal expressions - handle newline before
-        [/\n([eEaAuU][hH]+|[eEaAuU]m+)[,.\?]{0,1}\s/g, '\n'],
+        [/\n([eEaAuUhH][hHmM]+)[,.\?]{0,1}\s/g, '\n'],
         
         // Remove vocal expressions - handle space before
-        [/ ([eEaAuU][hH]+|[eEaAuU]m+)[,.\?]{0,1}\s/g, ' ']
+        [/ ([eEaAuUhH][hHmM]+)[,.\?]{0,1}\s/g, ' '],
+        
+        // Remove vocal expressions - handle opening tag before (e.g., >Hm, )
+        [/>([eEaAuUhH][hHmM]+)[,.\?]{0,1}\s/g, '>']
     ];
     
     // Use multiReplaceSync to apply all patterns in one operation
-    let processedContent = multiReplaceSync(content, replacePatterns);
+    let processedContent = multiReplaceSync(normalizedContent, replacePatterns);
     
     // Clean up any multiple consecutive newlines
     processedContent = processedContent.replace(/\n{3,}/g, '\n\n');
